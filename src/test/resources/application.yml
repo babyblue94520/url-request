@@ -1,0 +1,6 @@
+server:
+  servlet:
+    encoding:
+      force: false
+  tomcat:
+    uri-encoding: UTF-8
