@@ -1,9 +1,9 @@
-package pers.clare.urlrequest.controller;
+package pers.clare.server.controller;
 
-import pers.clare.urlrequest.vo.Data;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pers.clare.urlrequest.vo.Data;
 
 @RestController
 @RequestMapping("json")

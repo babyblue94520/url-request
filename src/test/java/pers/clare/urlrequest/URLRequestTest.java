@@ -2,15 +2,15 @@ package pers.clare.urlrequest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.*;
+import pers.clare.server.Application;
 import pers.clare.urlrequest.exception.URLRequestException;
 import pers.clare.urlrequest.exception.URLResponseException;
 import pers.clare.urlrequest.handler.ResponseHandler;
 import pers.clare.urlrequest.util.PerformanceUtil;
 import pers.clare.urlrequest.vo.Data;
-import org.junit.jupiter.api.*;
 
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,7 +24,7 @@ class URLRequestTest {
 
     @BeforeAll
     void before() {
-        ApplicationTest.main(new String[]{"--server.port=" + URLRequestTest.port});
+        Application.main(new String[]{"--server.port=" + URLRequestTest.port});
     }
 
     @Nested

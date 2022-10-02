@@ -3,7 +3,6 @@ package pers.clare.urlrequest;
 import pers.clare.urlrequest.exception.URLRequestException;
 import pers.clare.urlrequest.exception.URLResponseException;
 import pers.clare.urlrequest.handler.ResponseHandler;
-import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,7 +10,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -281,7 +279,7 @@ public class URLRequestUtil {
     private static Charset findCharset(Map<String, List<String>> headers) {
         try {
             for (Entry<String, List<String>> entry : headers.entrySet()) {
-                if (!StringUtils.hasLength(entry.getKey())) continue;
+                if (!hasLength(entry.getKey())) continue;
                 if (contentTypePattern.matcher(entry.getKey()).find()) {
                     for (String value : entry.getValue()) {
                         Matcher matcher = charsetPattern.matcher(value);
@@ -324,7 +322,7 @@ public class URLRequestUtil {
             , Charset charset
     ) {
         StringBuilder sb = new StringBuilder();
-        if (StringUtils.hasLength(query)) {
+        if (hasLength(query)) {
             String[] queryParams = query.split("&");
             int index;
             for (String param : queryParams) {
@@ -421,7 +419,7 @@ public class URLRequestUtil {
             , String str
             , Charset charset
     ) throws IOException {
-        if (StringUtils.hasLength(str)) {
+        if (hasLength(str)) {
             os.write(str.getBytes(charset));
             os.flush();
         }
@@ -442,10 +440,10 @@ public class URLRequestUtil {
                 .redirectAny(true);
 
         int index;
-        if (StringUtils.hasLength(bean.getBody()) && StringUtils.hasLength(bean.getParams())) {
+        if (hasLength(bean.getBody()) && hasLength(bean.getParams())) {
             String[] params = bean.getParams().split("\n");
             for (String param : params) {
-                if (!StringUtils.hasLength(param)) continue;
+                if (!hasLength(param)) continue;
                 index = param.indexOf(':');
                 if (index > -1) {
                     request.param(param.substring(0, index).trim(), param.substring(index + 1).trim());
@@ -456,10 +454,10 @@ public class URLRequestUtil {
         } else {
             request.body(bean.getBody());
         }
-        if (StringUtils.hasLength(bean.getHeaders())) {
+        if (hasLength(bean.getHeaders())) {
             String[] headers = bean.getHeaders().split("\n");
             for (String header : headers) {
-                if (!StringUtils.hasLength(header)) continue;
+                if (!hasLength(header)) continue;
                 index = header.indexOf(':');
                 if (index > -1) {
                     request.header(header.substring(0, index).trim(), header.substring(index + 1).trim());
@@ -469,5 +467,9 @@ public class URLRequestUtil {
             }
         }
         return request;
+    }
+
+    private static boolean hasLength(String str){
+        return str != null && str.length() > 0;
     }
 }
