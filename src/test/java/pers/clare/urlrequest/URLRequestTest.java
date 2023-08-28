@@ -22,6 +22,10 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 class URLRequestTest {
     public static final String port = "8080";
 
+    static {
+        System.setProperty("http.maxConnections", "2000");
+    }
+
     @BeforeAll
     void before() {
         Application.main(new String[]{"--server.port=" + URLRequestTest.port});
@@ -46,7 +50,7 @@ class URLRequestTest {
             return URLRequest
                     .build(url)
                     .method(method)
-                    .header(HeaderNames.CONTENT_TYPE, HeaderValues.X_WWW_FORM_URLENCODED+"; charset=ms950")
+                    .header(HeaderNames.CONTENT_TYPE, HeaderValues.X_WWW_FORM_URLENCODED + "; charset=ms950")
                     .param(name, value);
         }
 
@@ -82,11 +86,11 @@ class URLRequestTest {
 
         @Test
         void performance() throws Exception {
-            PerformanceUtil.byCount(100, (index) -> {
+            PerformanceUtil.byCount(100, () -> {
                 get();
                 get_404();
             });
-            PerformanceUtil.byCount(100, 100000, (index) -> {
+            PerformanceUtil.byTime(100, 20000, () -> {
                 get();
             });
         }

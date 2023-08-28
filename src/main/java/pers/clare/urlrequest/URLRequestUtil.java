@@ -97,7 +97,7 @@ public class URLRequestUtil {
             if (status > 300) {
                 // 重新定向
                 if (request.isRedirectAny()
-                        && (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM)) {
+                    && (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM)) {
                     if (redirectLocations == null) {
                         redirectLocations = new HashSet<>();
                     }
@@ -193,16 +193,23 @@ public class URLRequestUtil {
      * Sets the connection.
      */
     private static <T> HttpURLConnection setConnection(String method, URLRequest<T> request) throws IOException, URISyntaxException {
-        HttpURLConnection connection;
         Charset charset = findCharset(request.getHeaders());
         if (charset == null) {
             charset = request.getCharset();
         }
         boolean get = URLRequestMethod.GET.equalsIgnoreCase(method);
+        URL url;
         if (get) {
-            connection = (HttpURLConnection) getEncodeURL(request.getUrl(), request.getParams(), request.getUriCharset()).openConnection();
+            url = getEncodeURL(request.getUrl(), request.getParams(), request.getUriCharset());
         } else {
-            connection = (HttpURLConnection) getEncodeURL(request.getUrl(), null, charset).openConnection();
+            url = getEncodeURL(request.getUrl(), null, charset);
+        }
+        HttpURLConnection connection;
+        Proxy proxy = request.getProxy();
+        if (proxy == null) {
+            connection = (HttpURLConnection) url.openConnection();
+        } else {
+            connection = (HttpURLConnection) url.openConnection(proxy);
         }
         connection.setDoOutput(true);
         connection.setRequestMethod(method.toUpperCase());
@@ -469,7 +476,7 @@ public class URLRequestUtil {
         return request;
     }
 
-    private static boolean hasLength(String str){
+    private static boolean hasLength(String str) {
         return str != null && str.length() > 0;
     }
 }

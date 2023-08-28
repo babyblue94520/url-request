@@ -5,6 +5,7 @@ import pers.clare.urlrequest.handler.ResponseHandler;
 
 import java.net.CookieManager;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -32,6 +33,8 @@ public class URLRequest<T> {
 
     private Charset uriCharset = StandardCharsets.UTF_8;
     private Charset charset = StandardCharsets.UTF_8;
+
+    private Proxy proxy;
 
     public URLRequest(String urlString, ResponseHandler<T> handler) {
         try {
@@ -181,6 +184,13 @@ public class URLRequest<T> {
         return this;
     }
 
+
+    public URLRequest<T> proxy(Proxy proxy) {
+        this.proxy = proxy;
+        return this;
+    }
+
+
     public URL getUrl() {
         return url;
     }
@@ -195,6 +205,10 @@ public class URLRequest<T> {
 
     public CookieManager getCookieManager() {
         return cookieManager;
+    }
+
+    public Proxy getProxy() {
+        return proxy;
     }
 
     public boolean isRedirectAny() {
@@ -228,15 +242,15 @@ public class URLRequest<T> {
     @Override
     public String toString() {
         return "URLRequest{" +
-                "url=" + url +
-                ", params=" + params +
-                ", headers=" + headers +
-                ", cookieManager=" + cookieManager +
-                ", redirectCrossProtocol=" + redirectAny +
-                ", timeout=" + timeout +
-                ", readTimeout=" + readTimeout +
-                ", method='" + method + '\'' +
-                ", bodyString='" + bodyString + '\'' +
-                '}';
+               "url=" + url +
+               ", params=" + params +
+               ", headers=" + headers +
+               ", cookieManager=" + cookieManager +
+               ", redirectCrossProtocol=" + redirectAny +
+               ", timeout=" + timeout +
+               ", readTimeout=" + readTimeout +
+               ", method='" + method + '\'' +
+               ", bodyString='" + bodyString + '\'' +
+               '}';
     }
 }
