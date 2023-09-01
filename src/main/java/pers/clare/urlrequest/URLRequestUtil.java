@@ -202,7 +202,13 @@ public class URLRequestUtil {
         if (get) {
             url = getEncodeURL(request.getUrl(), request.getParams(), request.getUriCharset());
         } else {
-            url = getEncodeURL(request.getUrl(), null, charset);
+            if (request.bodyString == null
+                    && request.bodyBytes == null
+            ) {
+                url = request.getUrl();
+            }else {
+                url = getEncodeURL(request.getUrl(), request.getParams(), request.getUriCharset());
+            }
         }
         HttpURLConnection connection;
         Proxy proxy = request.getProxy();
@@ -233,13 +239,17 @@ public class URLRequestUtil {
 
         mergeCookie(request);
         writeHeaders(connection, request.getHeaders());
+        OutputStream os = connection.getOutputStream();
         if (!get) {
-            if (request.getBodyString() == null) {
-                write(connection.getOutputStream(), request.getParams(), charset);
+            if (request.bodyBytes != null) {
+                write(os, request.bodyBytes);
+            } else if (request.bodyString != null) {
+                write(os, request.bodyString, charset);
             } else {
-                write(connection.getOutputStream(), request.getBodyString(), charset);
+                write(os, request.getParams(), charset);
             }
         }
+        os.flush();
         return connection;
     }
 
@@ -399,7 +409,6 @@ public class URLRequestUtil {
                 writeParameter(os, entry.getKey(), value, charset);
             }
         }
-        os.flush();
     }
 
     private static void writeParameter(
@@ -427,10 +436,21 @@ public class URLRequestUtil {
             , Charset charset
     ) throws IOException {
         if (hasLength(str)) {
-            os.write(str.getBytes(charset));
-            os.flush();
+            write(os, str.getBytes(charset));
         }
     }
+
+    /**
+     * Write.
+     */
+    private static void write(
+            OutputStream os
+            , byte[] bytes
+    ) throws IOException {
+        if (bytes == null || bytes.length == 0) return;
+        os.write(bytes);
+    }
+
 
     /**
      * Creates the request.

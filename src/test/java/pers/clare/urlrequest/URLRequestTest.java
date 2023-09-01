@@ -90,7 +90,7 @@ class URLRequestTest {
                 get();
                 get_404();
             });
-            PerformanceUtil.byTime(100, 20000, () -> {
+            PerformanceUtil.byTime(100, 10000, () -> {
                 get();
             });
         }
@@ -144,6 +144,65 @@ class URLRequestTest {
         @Test
         void delete() {
             assertEquals(data, build(URLRequestMethod.DELETE).go().getBody());
+        }
+        @Test
+        void performance() throws Exception {
+            PerformanceUtil.byTime(100, 10000, this::post);
+        }
+    }
+
+    @Nested
+    @TestInstance(PER_CLASS)
+    class bytes_json_response {
+        private final Data data = new Data(System.currentTimeMillis(), new String[]{"1", "2"});
+        private final String url = toUrl();
+
+        private String toUrl() {
+            String queryString = "?param=param";
+            return "http://127.0.0.1:" + port + "/json" + queryString;
+        }
+
+        private final ObjectMapper om = new ObjectMapper();
+
+        private final ResponseHandler<Data> handler = (in, charset) -> om.readValue(new InputStreamReader(in, charset), Data.class);
+
+        private URLRequest<Data> build(String method) {
+            try {
+                return URLRequest
+                        .build(url, handler)
+                        .method(method)
+                        .header(HeaderNames.CONTENT_TYPE, HeaderValues.JSON)
+                        .body(om.writeValueAsBytes(data))
+                        ;
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Test
+        void get() {
+            URLResponseException exception = assertThrows(URLResponseException.class, build(URLRequestMethod.GET)::go);
+            assertEquals(400, exception.getResponse().getStatus());
+        }
+
+        @Test
+        void post() {
+            assertEquals(data, build(URLRequestMethod.POST).go().getBody());
+        }
+
+        @Test
+        void put() {
+            assertEquals(data, build(URLRequestMethod.PUT).go().getBody());
+        }
+
+        @Test
+        void delete() {
+            assertEquals(data, build(URLRequestMethod.DELETE).go().getBody());
+        }
+        @Test
+        void performance() throws Exception {
+            PerformanceUtil.byTime(100, 10000, this::post);
         }
     }
 

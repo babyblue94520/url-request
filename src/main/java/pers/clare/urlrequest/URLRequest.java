@@ -29,11 +29,10 @@ public class URLRequest<T> {
     private Integer timeout;
     private Integer readTimeout;
     private String method;
-    private String bodyString;
-
     private Charset uriCharset = StandardCharsets.UTF_8;
     private Charset charset = StandardCharsets.UTF_8;
-
+    String bodyString;
+    byte[] bodyBytes;
     private Proxy proxy;
 
     public URLRequest(String urlString, ResponseHandler<T> handler) {
@@ -60,6 +59,7 @@ public class URLRequest<T> {
         this.readTimeout = request.readTimeout;
         this.method = request.method;
         this.bodyString = request.bodyString;
+        this.bodyBytes = request.bodyBytes;
         this.uriCharset = request.uriCharset;
         this.charset = request.charset;
     }
@@ -163,6 +163,11 @@ public class URLRequest<T> {
         return this;
     }
 
+    public URLRequest<T> body(byte[] body) {
+        bodyBytes = body;
+        return this;
+    }
+
     public URLRequest<T> param(String name, Object value) {
         if (value == null) return this;
         params.computeIfAbsent(name, (key) -> new ArrayList<>())
@@ -184,12 +189,10 @@ public class URLRequest<T> {
         return this;
     }
 
-
     public URLRequest<T> proxy(Proxy proxy) {
         this.proxy = proxy;
         return this;
     }
-
 
     public URL getUrl() {
         return url;
@@ -227,7 +230,10 @@ public class URLRequest<T> {
         return method;
     }
 
-    public String getBodyString() {
+    public String getBody() {
+        if (bodyString == null && bodyBytes != null) {
+            bodyString = new String(bodyBytes);
+        }
         return bodyString;
     }
 
@@ -249,8 +255,7 @@ public class URLRequest<T> {
                ", redirectCrossProtocol=" + redirectAny +
                ", timeout=" + timeout +
                ", readTimeout=" + readTimeout +
-               ", method='" + method + '\'' +
-               ", bodyString='" + bodyString + '\'' +
-               '}';
+               ", method='" + method + "'" +
+               ", body='" + getBody() + "'}";
     }
 }
