@@ -5,7 +5,7 @@
 
     <groupId>io.github.babyblue94520</groupId>
     <artifactId>url-request</artifactId>
-    <version>1.0.0-RELEASE</version>
+    <version>1.0.1-RELEASE</version>
     <name>url-request</name>
     <packaging>jar</packaging>
     <description>Url request library</description>
@@ -38,6 +38,7 @@
     <properties>
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
     </properties>
 
     <dependencies>
