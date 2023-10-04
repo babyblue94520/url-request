@@ -6,15 +6,6 @@
 
 ## QuickStart
 
-### pom.xml
-```xml
-<dependency>
-    <groupId>io.github.babyblue94520</groupId>
-    <artifactId>url-request</artifactId>
-    <version>1.0.0-RELEASE</version>
-</dependency>
-```
-
 ### Usage
 
 * Default return `string` body.
