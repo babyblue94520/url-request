@@ -239,8 +239,8 @@ public class URLRequestUtil {
 
         mergeCookie(request);
         writeHeaders(connection, request.getHeaders());
-        OutputStream os = connection.getOutputStream();
         if (!get) {
+            OutputStream os = connection.getOutputStream();
             if (request.bodyBytes != null) {
                 write(os, request.bodyBytes);
             } else if (request.bodyString != null) {
@@ -248,8 +248,8 @@ public class URLRequestUtil {
             } else {
                 write(os, request.getParams(), charset);
             }
+            os.flush();
         }
-        os.flush();
         return connection;
     }
 
